@@ -29,11 +29,20 @@ def binary_classification_metrics(y_pred, y_true):
             TN += 1
         elif test[i] == 1 and y_pred[i] == 0:
             FN += 1
-    precision = TP/(TP+FP)
-    recall = TP/(TP+FN)
-    accuracy = (TP + TN)/(TP + TN + FP + FN)
-    f_m = 2*(precision*recall/(precision + recall))
+    try:
+        precision = TP/(TP+FP)
+        recall = TP/(TP+FN)
+        accuracy = (TP + TN)/(TP + TN + FP + FN)
+        f_m = 2*(precision*recall/(precision + recall))
+    except ZeroDivisionError:
+        print("Could not divide by zero. Precision and F1 score can't be counted")
+        recall = TP/(TP+FN)
+        accuracy = (TP + TN)/(TP + TN + FP + FN)
+        precision, f_m = None, None
+        
+    
     return precision, recall, accuracy, f_m
+
 
 
 def multiclass_accuracy(y_pred, y_test, adj = False):
@@ -61,7 +70,7 @@ def multiclass_accuracy(y_pred, y_test, adj = False):
     return total_accuracy
 
 
-def r_squared(y_pred, y_true):
+def r_squared(predict_Di, y_arr_tst):
     """
     Computes r-squared for regression
     Arguments:
@@ -78,7 +87,7 @@ def r_squared(y_pred, y_true):
     return (1 - r_sq_up/r_sq_down)
 
 
-def mse(y_pred, y_true):
+def mse(predict_Di, y_arr_tst):
     """
     Computes mean squared error
     Arguments:
@@ -93,7 +102,7 @@ def mse(y_pred, y_true):
     return mse/float(len(X_arr_tst))
 
 
-def mae(y_pred, y_true):
+def mae(predict_Di, y_arr_tst):
     """
     Computes mean absolut error
     Arguments:
